@@ -1,4 +1,4 @@
-﻿import { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { prisma } from '../config/prisma';
 
 // 1. Obtener todos los productos con filtros, búsqueda y paginación
@@ -57,7 +57,7 @@ export const getProducts = async (req: Request, res: Response) => {
 // 2. Obtener un producto por ID
 export const getProductById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const product = await prisma.product.findUnique({
       where: { id },
       include: { category: true },
@@ -105,7 +105,7 @@ export const createProduct = async (req: Request, res: Response) => {
 // 4. Actualizar Producto (Solo ADMIN)
 export const updateProduct = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { title, description, price, stock, imageUrl, categoryId } = req.body;
 
     const product = await prisma.product.update({
@@ -131,7 +131,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 // 5. Eliminar Producto (Solo ADMIN)
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     await prisma.orderItem.deleteMany({ where: { productId: id } });
     await prisma.product.delete({ where: { id } });
@@ -173,7 +173,7 @@ export const getCategories = async (req: Request, res: Response) => {
 // 8. Eliminar Categoría (Solo ADMIN)
 export const deleteCategory = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     const productsCount = await prisma.product.count({ where: { categoryId: id } });
     if (productsCount > 0) {
